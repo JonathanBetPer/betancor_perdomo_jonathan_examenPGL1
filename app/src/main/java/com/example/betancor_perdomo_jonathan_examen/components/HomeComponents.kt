@@ -6,9 +6,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -66,7 +69,7 @@ fun TarjetaAlumno(nombre: String, imagenID: Int) {
     Row(
         modifier = Modifier.padding(all = 8.dp)
             .shadow(30.dp, shape = RectangleShape)
-            .background(MaterialTheme.colorScheme.surface)
+            .background(MaterialTheme.colorScheme.surface),
 
     ) {
         Image(
@@ -123,6 +126,7 @@ fun Conversacion(messages: List<Message>, colorExpandido: Color, imagenID: Int) 
     }
 }
 
+//Mensaje Card para solo Profesor
 @Composable
 fun MessageCard(msg: Message, colorExpandido: Color, imagenID: Int ) {
 
@@ -172,3 +176,125 @@ fun MessageCard(msg: Message, colorExpandido: Color, imagenID: Int ) {
         }
     }
 }
+
+
+//Cambios para conversación Alumno-Profesor (Extra)
+
+@Composable
+fun ConversacionDoble(messages: List<Message>, colorExpandido: Color, imagenIDProfesor: Int, imagenIDAlumno: Int, nombreAlumno: String) {
+    LazyColumn(modifier = Modifier.fillMaxSize().padding(start = 4.dp)) {
+        items(messages) { message ->
+
+            if (message.author == "Profesor") {
+                BloqueMensajeIzq(message, colorExpandido, imagenIDProfesor)
+            }else{
+                BloqueMensajeDer(message, MaterialTheme.colorScheme.primary, imagenIDAlumno, nombreAlumno)
+            }
+        }
+    }
+}
+
+@Composable
+fun BloqueMensajeIzq(msg: Message, colorExpandido: Color, imagenID: Int ) {
+
+    var isExpanded by remember { mutableStateOf(false) }
+    val surfaceColor by animateColorAsState(
+        if (isExpanded) colorExpandido else MaterialTheme.colorScheme.surface,
+        label = "",
+    )
+
+    Row(modifier = Modifier.padding(all = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+        ) {
+        Image(
+            painter = painterResource(imagenID),
+            contentDescription = "Imagen de perfil ${msg.author}",
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .border(1.5.dp, MaterialTheme.colorScheme.secondary, CircleShape)
+        )
+
+        SpaceV(8.dp)
+
+        Column(modifier = Modifier.clickable { isExpanded = !isExpanded }.fillMaxSize(7/8f)) {
+
+            Text(
+                text = msg.author,
+                color = MaterialTheme.colorScheme.secondary,
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            SpaceH(4.dp)
+
+            Surface(
+                shape = MaterialTheme.shapes.medium,
+                tonalElevation = 1.dp,
+                color = surfaceColor,
+                modifier = Modifier.animateContentSize().padding(1.dp)
+            ) {
+                Text(
+                    text = msg.body,
+                    modifier = Modifier.padding(all = 4.dp),
+                    maxLines = if (isExpanded) Int.MAX_VALUE else 1,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun BloqueMensajeDer(msg: Message, colorExpandido: Color, imagenID: Int, nombreAlumno: String  ) {
+
+    var isExpanded by remember { mutableStateOf(false) }
+    val surfaceColor by animateColorAsState(
+        if (isExpanded) colorExpandido else MaterialTheme.colorScheme.surface,
+        label = "",
+    )
+
+    Row(modifier = Modifier.padding(all = 8.dp),
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically
+
+        ) {
+
+        Column(modifier = Modifier.clickable { isExpanded = !isExpanded }.fillMaxSize(7/8f),
+            horizontalAlignment = Alignment.End
+            ) {
+
+            Text(
+                text = msg.author+" "+nombreAlumno,
+                color = MaterialTheme.colorScheme.secondary,
+                style = MaterialTheme.typography.titleMedium,
+            )
+
+            SpaceH(4.dp)
+
+            Surface(
+                shape = MaterialTheme.shapes.medium,
+                tonalElevation = 1.dp,
+                color = surfaceColor,
+                modifier = Modifier.animateContentSize().padding(1.dp)
+            ) {
+                Text(
+                    text = msg.body,
+                    modifier = Modifier.padding(all = 4.dp),
+                    maxLines = if (isExpanded) Int.MAX_VALUE else 1,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+
+        Image(
+            painter = painterResource(imagenID),
+            contentDescription = "Imagen de perfil ${msg.author}",
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .border(1.5.dp, MaterialTheme.colorScheme.secondary, CircleShape)
+        )
+    }
+}
+
+

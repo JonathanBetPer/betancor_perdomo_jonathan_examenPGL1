@@ -22,6 +22,7 @@ import com.example.betancor_perdomo_jonathan_examen.Mensajes
 import com.example.betancor_perdomo_jonathan_examen.R
 import com.example.betancor_perdomo_jonathan_examen.components.Boton
 import com.example.betancor_perdomo_jonathan_examen.components.Conversacion
+import com.example.betancor_perdomo_jonathan_examen.components.ConversacionDoble
 import com.example.betancor_perdomo_jonathan_examen.components.SpaceV
 import com.example.betancor_perdomo_jonathan_examen.components.TarjetaAlumno
 import com.example.betancor_perdomo_jonathan_examen.components.TituloBarra
@@ -44,7 +45,6 @@ fun HomeView(){
                     containerColor = MaterialTheme.colorScheme.primary
                 )
             )
-
         }
     ) {
         ContentHomeView(imagenProfesor, imagenAlumno, nombreAlumno)
@@ -61,8 +61,9 @@ fun ContentHomeView(imagenProfesor: Int, imagenAlumno: Int, nombreAlumno: String
     }
 
     Column(
-        modifier = Modifier.fillMaxSize()
-            .padding(vertical = 80.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 80.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TarjetaAlumno(nombre = nombreAlumno, imagenID = imagenAlumno)
@@ -74,8 +75,13 @@ fun ContentHomeView(imagenProfesor: Int, imagenAlumno: Int, nombreAlumno: String
         }
 
         SpaceV(5.dp)
+        // Conversación Simple
+        // Conversacion(messages = Mensajes.conversationSample , colorExpandido = listaColores.get(numeroRandom), imagenID = imagenProfesor)
+        ConversacionDoble(messages = Mensajes.conversaionAlumnoProfesor,
+            colorExpandido = listaColores.get(numeroRandom),
+            imagenIDProfesor = imagenProfesor,
+            imagenIDAlumno = imagenAlumno,
+            nombreAlumno = nombreAlumno )
 
-        Conversacion(messages = Mensajes.conversationSample , colorExpandido = listaColores.get(numeroRandom), imagenID = imagenProfesor)
     }
-
 }
